@@ -1,0 +1,16 @@
+<h2>Create an account</h2>
+<form  method="POST" action="/home">
+<div class="form-group">
+<input type="text" class="form-control" placeholder="Enter username" name="uname">    
+</div>
+<input type="hidden" name="register" value="some">
+<div class="form-group">
+<input type="password" class="form-control" placeholder="Enter password" name="passw">    
+</div>
+<div class="form-group">
+<input type="password" class="form-control" placeholder="Enter password (again)" name="passw2">    
+</div>
+{{#if error}} <span class="alert alert-dismissible alert-danger"> {{error}} </span> {{/if}}
+<div class="form-group">
+<input type="submit" class="btn btn-primary" class="form-control" value="Create account" >
+</div>
