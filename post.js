@@ -1,42 +1,29 @@
-class Post
-{
-     constructor()
-     {
-     
-     }
-     
-     set Topic(top)
-     {
-         this.topic=top;
-     }
-     get Topic()
-     {
-         return this.topic;
-     }
+class Post {
+  constructor() {}
 
-     
-     set Title(tit)
-     {
-         this.title=tit;
-     }
-     get Title()
-     {
-         return this.title;
-     }
-     
-     set Lecture(lec)
-     {
-         this.lecture=lec;
-     }
-     get Lecture()
-     {
-         return this.lecture;
-     }
+  set Topic(top) {
+    this.topic = top;
+  }
+  get Topic() {
+    return this.topic;
+  }
 
-    
+  set Title(tit) {
+    this.title = tit;
+  }
+  get Title() {
+    return this.title;
+  }
+
+  set Lecture(lec) {
+    this.lecture = lec;
+  }
+  get Lecture() {
+    return this.lecture;
+  }
 }
 
-module.exports.Post=Post;
+module.exports.Post = Post;
 /*
 var post=new Post();
 post.Topic='My topic';

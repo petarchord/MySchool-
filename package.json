@@ -4,7 +4,8 @@
   "description": "My school aplication",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "nodemon --watch index.js"
   },
   "author": "Petar Jovanovic",
   "license": "ISC",
@@ -15,5 +16,8 @@
     "express-handlebars": "^3.0.0",
     "method-override": "^3.0.0",
     "redis": "^2.8.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.18.9"
   }
 }
