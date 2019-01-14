@@ -162,7 +162,6 @@ else
 });
 
 app.post('/admin',(req,res,next)=>{
-    console.log('test');
     topic=req.body.topic;
     title=req.body.title;
     lecture=req.body.lecture;
@@ -171,15 +170,16 @@ app.post('/admin',(req,res,next)=>{
         if(!client.hmset('post:'+objid,'topic',topic,'title',title,'lecture',lecture))
         console.log('Failure during db write post!');
         publisher.publish('math','post:'+objid);
-      /*  res.render('admin',{
+        
+
+
+    });
+    res.render('admin',{
             username:'admin',
             topic:topic,
             title:title,
             lecture:lecture
-        }); */
-
-
-    });
+        }); 
 });
 
 
@@ -228,59 +228,23 @@ app.get('/home/english',(req,res,next)=>{
     });
 });
 
-//home/maths/mathematics get
 
-app.get('/home/math/mathematics',(req,res,next)=>{
-/*
-            client.get('next_post_id',(err,length)=>{
-            var posts=new Array(length);
-            for(var i=1;i<=length;i++)
-            {
-                var post=new Post.Post();
-                
-                
-                
-                
-                client.hget('post:'+i,'topic',(err,objtop)=>{
-                    post.Topic=objtop;
-                });
-                client.hget('post:'+i,'title',(err,objtit)=>{
-                    post.Title=objtit;
-                });
-                client.hget('post:'+i,'lecture',(err,objlec)=>{
-                    post.Lecture=objlec;
-                });
-
-                posts.push(post);
-                
-
-            }
-            console.log(posts);
-            res.render('mathematics',{
-                posts:posts
-            });
-
-        });
-
-
-
-*/
-    
+//subscriber proccessing
+//problem solved by kicking this code out of get requrest handler
     subscriber.on("message",(chanel,message)=>{
-//to do: if post doesn't exist show the message 'there is no topics yet'
-//list my courses needs to be updated with the subscribed subjects
-//all published posts must be visible in this view
         console.log('The message has arrived'+message);
         client.lpush('posts',message);
         client.lrange('posts',0,-1,(err,objlist)=>{
             console.log(objlist);
+            posts=new Array(objlist.length);
            // posts.length=objlist.length;
             objlist.forEach((item,index)=>{
+                
                  var post=new Post.Post();    
                  client.hgetall(item,(err,obj)=>{
                      post.Topic=obj.topic;
                      post.Title=obj.title;
-                     post.lecture=obj.lecture;
+                     post.Lecture=obj.lecture;
                      posts.push(post);
                      
                      
@@ -289,42 +253,35 @@ app.get('/home/math/mathematics',(req,res,next)=>{
                
                 
             });
-            
+
+
             
            
         });
 
-        
-            
-            
-        });
+    });
 
 
 
-         
-/*
-        client.hget(message,'topic',(err,obj1)=>{
-            topic=obj1;  
-        });
-        client.hget(message,'title',(err,obj2)=>{
-            title=obj2;
-        });
-        client.hget(message,'lecture',(err,obj3)=>{
-            lecture=obj3;
-        });
-        
-        */
+//home/maths/mathematics get
+
+app.get('/home/math/mathematics',(req,res,next)=>{
+
         
         var empty=false;
         if(posts.length==0)
         empty=true;
         if(cnd)
         {
+            console.log('I am subsribed to math chanel');
             subscriber.subscribe('math');
             cnd=false;   
         }
+        else
+        {   
+            console.log('I am not subsribed to math chanel');
+        }
         
-
         res.render('mathematics',{
             username:temp,
             posts:posts,
