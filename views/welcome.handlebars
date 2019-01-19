@@ -1,15 +1,18 @@
-<div width="350px" height="450px" top="50%" left="50%" position="absolute">
-<h2>Log in here</h2>
+<div style="width: 390px; height: 490px; top: 50%; left: 50%; position: absolute; background: #000;
+transform:translate(-50%,-50%); box-sizing:border-box;
+
+">
+<h1 style="text-align:center">Log in here</h1>
 <form  method="POST" action="/home">
-<div class="form-group">
-<input type="text" class="form-control" placeholder="Enter username" name="username">    
+<div style="top:100px; position:absolute; width:100%;">
+<input type="text" class="form-control" placeholder="Enter username" name="username"  >    
 </div>
-<div class="form-group">
+<div style="top:160px; position:absolute; width:100%;">
 <input type="password" class="form-control" placeholder="Enter password" name="password">    
 </div>
-<p>You don't have an account?</p><a href="/register" > Create one here. </a> 
+<p style="top:220px; left:25%; position:absolute;">You don't have an account?</p><a href="/register" style="top:250px; position:absolute; left:35%;" > Create one here. </a> 
 {{#if error}} <span class="alert alert-dismissible alert-danger"> {{error}} </span> {{/if}}
-<div class="form-group">
+<div style="top:290px; left:40%; position:absolute;">
 <input type="submit" class="btn btn-primary" value="Log in" >
 </div>
 </form>

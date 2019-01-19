@@ -12,11 +12,10 @@
       <li class="nav-item dropdown">
     <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">My Courses</a>
     <div class="dropdown-menu" x-placement="bottom-start" style="position: absolute; transform: translate3d(0px, 40px, 0px); top: 0px; left: 0px; will-change: transform;">
-      {{# each myCourses}}
+    {{# each myCourses}}
     <a class="dropdown-item" href="{{this.link}}">{{this.name}}</a>
       {{/each}}
     </div>
-   
   </li>
 
 
@@ -40,12 +39,18 @@
   </div>
 </nav>
 
-<div class="jumbotron">
-  <h4 class="display-3">Mathematics</h4>
-  <p class="lead">Welcome to mathematics course ! In this course you will receive posts and do the tests about various topics of math in order to prepare yourself for the exam. If you want to subscribe to this course click on the 'Subscribe' button bellow.</p>
-  <hr class="my-4">
-  <p>It’s perhaps strange that for a subject that relies so strongly on mathematical proof, there is no right or wrong answer when it comes to answering the question, “what is mathematics?” Aristotle defined mathematics as “the science of quantity”.</p>
-  <p class="lead">
-    <a class="btn btn-primary btn-lg" href="/home/math/mathematics" role="button">Subscribe</a>
-  </p>
+<p class="lead"> You are now subscribed to english course. Check out new topics and explore your options.</p>
+{{# if empty}}
+<p class="lead"> There are no any topics yet. </p>
+{{else}}
+{{# each posts}}
+<div class="card text-white bg-primary mb-3" style="max-width: 20rem;">
+  <div class="card-header">{{this.Topic}}</div>
+  <div class="card-body">
+    <h4 class="card-title">{{this.Title}}</h4>
+    <p class="card-text">{{this.Lecture}}</p>
+  </div>
 </div>
+{{/each}}
+{{/if}}
+

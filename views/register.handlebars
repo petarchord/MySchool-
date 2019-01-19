@@ -1,16 +1,21 @@
-<h2>Create an account</h2>
+<div style="width: 390px; height: 490px; top: 50%; left: 50%; position: absolute; background: #000;
+transform:translate(-50%,-50%); box-sizing:border-box;
+
+">
+<h2 style="text-align:center;">Create an account</h2>
 <form  method="POST" action="/home">
-<div class="form-group">
+<div style="top:100px; position:absolute; width:100%;">
 <input type="text" class="form-control" placeholder="Enter username" name="uname">    
 </div>
 <input type="hidden" name="register" value="some">
-<div class="form-group">
+<div style="top:150px; position:absolute; width:100%;">
 <input type="password" class="form-control" placeholder="Enter password" name="passw">    
 </div>
-<div class="form-group">
+<div style="top:200px; position:absolute; width:100%;">
 <input type="password" class="form-control" placeholder="Enter password (again)" name="passw2">    
 </div>
 {{#if error}} <span class="alert alert-dismissible alert-danger"> {{error}} </span> {{/if}}
-<div class="form-group">
+<div style="top:270px; position:absolute; left:32%;">
 <input type="submit" class="btn btn-primary" class="form-control" value="Create account" >
+</div>
 </div>

@@ -19,6 +19,8 @@ client.on('connect',()=> {
 });
 let publisher=redis.createClient();
 let subscriber=redis.createClient();
+let subscriber2=redis.createClient();
+let subscriber3=redis.createClient();
 
 const app=express();
 
@@ -34,7 +36,10 @@ var temp;
 var topic;
 var title;
 var lecture;
-var posts=new Array();
+var postsMath=new Array();
+var postsHistory=new Array();
+var postsEnglish=new Array();
+var myCourses=new Array();
 var cnd=true;
 
 
@@ -165,11 +170,25 @@ app.post('/admin',(req,res,next)=>{
     topic=req.body.topic;
     title=req.body.title;
     lecture=req.body.lecture;
-    client.INCR('next_post_id',(err,objid)=>{
+    var hidden=req.body.hidden;
+  
+      client.INCR('next_post_id',(err,objid)=>{
         console.log('next_post_id:'+objid);
         if(!client.hmset('post:'+objid,'topic',topic,'title',title,'lecture',lecture))
         console.log('Failure during db write post!');
-        publisher.publish('math','post:'+objid);
+        switch(hidden)
+        {
+            case 'math':
+            publisher.publish('math','post:'+objid);
+            break;
+            case 'history':
+            publisher.publish('history','post:'+objid);
+            break;
+            case 'english':
+            publisher.publish('english','post:'+objid);
+            default: console.log('The hidden is unknown!');
+        }
+        
         
 
 
@@ -202,7 +221,8 @@ app.get('/register',(req,res,next)=>{
 app.get('/home',(req,res,next)=>{
 
     res.render('home', {
-        username: temp
+        username: temp,
+        myCourses:myCourses
     });
 })
 
@@ -210,21 +230,31 @@ app.get('/home',(req,res,next)=>{
 
 app.get('/home/math',(req,res,next)=>{
     res.render('math',{
-        username:temp
+        username:temp,
+        myCourses:myCourses
     });
 
 });
 //home/history get
 app.get('/home/history',(req,res,next)=>{
     res.render('history',{
-        username:temp
+        username:temp,
+        myCourses:myCourses
     });
 });
 
 app.get('/home/english',(req,res,next)=>{
 
     res.render('english',{
-        username:temp
+        username:temp,
+        myCourses:myCourses
+    });
+});
+
+app.get('/home/about',(req,res,next)=>{
+    res.render('about',{
+        username:temp,
+        myCourses:myCourses
     });
 });
 
@@ -233,10 +263,10 @@ app.get('/home/english',(req,res,next)=>{
 //problem solved by kicking this code out of get requrest handler
     subscriber.on("message",(chanel,message)=>{
         console.log('The message has arrived'+message);
-        client.lpush('posts',message);
-        client.lrange('posts',0,-1,(err,objlist)=>{
+        client.lpush('posts_math',message);
+        client.lrange('posts_math',0,-1,(err,objlist)=>{
             console.log(objlist);
-            posts=new Array(objlist.length);
+            postsMath=new Array(objlist.length);
            // posts.length=objlist.length;
             objlist.forEach((item,index)=>{
                 
@@ -245,7 +275,7 @@ app.get('/home/english',(req,res,next)=>{
                      post.Topic=obj.topic;
                      post.Title=obj.title;
                      post.Lecture=obj.lecture;
-                     posts.push(post);
+                     postsMath.push(post);
                      
                      
 
@@ -261,6 +291,116 @@ app.get('/home/english',(req,res,next)=>{
 
     });
 
+    subscriber2.on('message',(chanel,message)=>{
+
+        console.log('The message has arrived'+message);
+        client.lpush('posts_history',message);
+        client.lrange('posts_history',0,-1,(err,objlist)=>{
+            console.log(objlist);
+            postsHistory=new Array(objlist.length);
+           // posts.length=objlist.length;
+            objlist.forEach((item,index)=>{
+                
+                 var post=new Post.Post();    
+                 client.hgetall(item,(err,obj)=>{
+                     post.Topic=obj.topic;
+                     post.Title=obj.title;
+                     post.Lecture=obj.lecture;
+                     postsHistory.push(post);
+                     
+                     
+
+                 });
+               
+                
+            });
+
+
+            
+           
+        });
+
+    });
+
+    subscriber3.on('message',(chanel,message)=>{
+
+        console.log('The message has arrived'+message);
+        client.lpush('posts_english',message);
+        client.lrange('posts_english',0,-1,(err,objlist)=>{
+            console.log(objlist);
+            postsEnglish=new Array(objlist.length);
+           // posts.length=objlist.length;
+            objlist.forEach((item,index)=>{
+                
+                 var post=new Post.Post();    
+                 client.hgetall(item,(err,obj)=>{
+                     post.Topic=obj.topic;
+                     post.Title=obj.title;
+                     post.Lecture=obj.lecture;
+                     postsEnglish.push(post);
+                     
+                     
+
+                 });
+               
+                
+            });
+
+
+            
+           
+        });
+
+    });
+
+ app.get('/home/history/hist',(req,res,next)=>{
+        var empty=false;
+        if(postsHistory.length==0)
+        empty=true;
+        subscriber2.subscribe('history');
+        var push=true;
+        myCourses.forEach((item)=>{
+            if(item.name=='History')
+            push=false;
+
+        });
+        if(push)
+        {
+            myCourses.push({name:'History',link:'/home/history/hist'});
+        }
+        
+     res.render('hist',{
+         username:temp,
+         posts:postsHistory,
+         empty:empty,
+         myCourses:myCourses
+     });
+ });
+
+ app.get('/home/english/eng',(req,res,next)=>{
+        var empty=false;
+        if(postsEnglish.length==0)
+        empty=true;
+        subscriber3.subscribe('english');
+        var push=true;
+        myCourses.forEach((item)=>{
+            if(item.name=='English')
+            push=false;
+
+        });
+        if(push)
+        {
+            myCourses.push({name:'English',link:'/home/english/eng'});
+        }
+        
+     res.render('eng',{
+         username:temp,
+         posts:postsEnglish,
+         empty:empty,
+         myCourses:myCourses
+     });
+ });
+
 
 
 //home/maths/mathematics get
@@ -269,23 +409,31 @@ app.get('/home/math/mathematics',(req,res,next)=>{
 
         
         var empty=false;
-        if(posts.length==0)
+        if(postsMath.length==0)
         empty=true;
-        if(cnd)
+       
+        subscriber.subscribe('math');
+        var push=true;
+        myCourses.forEach((item)=>{
+            if(item.name=='Math')
+            push=false;
+
+        });
+        if(push)
         {
-            console.log('I am subsribed to math chanel');
-            subscriber.subscribe('math');
-            cnd=false;   
+            myCourses.push({name:'Math',link:'/home/math/mathematics'});
         }
-        else
-        {   
-            console.log('I am not subsribed to math chanel');
-        }
+        
+            
+             
+        
+       
         
         res.render('mathematics',{
             username:temp,
-            posts:posts,
-            empty:empty
+            posts:postsMath,
+            empty:empty,
+            myCourses:myCourses
         });
     });
 
